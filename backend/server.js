@@ -15,7 +15,6 @@ fs.ensureDirSync(outputDir);
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 app.use('/output', express.static(outputDir));
 
 let globalData = [];
@@ -202,11 +201,14 @@ app.post('/generate', (req, res) => {
   }
 });
 
-// ✅ Serve React frontend from the build folder
-app.use(express.static(path.join(__dirname, '../frontend/build')));
 
+// ✅ Serve React frontend (build folder)
+const frontendPath = path.join(__dirname, '../frontend/build');
+app.use(express.static(frontendPath));
+
+// ✅ Handle any route not starting with `/api` or `/output`
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 app.listen(PORT, () => {
